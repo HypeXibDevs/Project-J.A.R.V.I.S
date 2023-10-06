@@ -5,7 +5,7 @@ import pyautogui
 import os
 import time
 import pygame   
-import webbrowser
+import webbrowser as wb
 from datetime import datetime
 
 startlus = False
@@ -25,7 +25,7 @@ def talk(text):
 
 
 def main_music():
-    audio_file_path = "C:\\Users\\jordy\\OneDrive\\Documenten\\Project jarvis\\jarvis.mp3"
+    audio_file_path = ".\Sounds\JarvisStart.mp3"
     
     pygame.init()
     pygame.mixer.music.load(audio_file_path)
@@ -37,24 +37,24 @@ def main_music():
 main_music()
 
 def End_music():
-    audio_file_path = "C:\\Users\\jordy\\OneDrive\\Documenten\\Project jarvis\\end.mp3"
+    audio_file_path = ".\Sounds\JarvisEnd.mp3"
     
     pygame.init()
     pygame.mixer.music.load(audio_file_path)
     pygame.mixer.music.play()
     
-    time.sleep(19)  # Play for 19 seconds
+    time.sleep(3)  # Play for 3 seconds
     pygame.quit()
 
 
 
 def greeting_user():
     hour = datetime.now().hour
-    if (hour >= 6)  and (hour < 12):
+    if hour >= 4  and hour < 12:
         talk('Good morning boss')
-    elif (hour >=12) and (hour <16):
+    elif hour >= 12 and hour < 16:
         talk('Good afternoon boss')
-    elif (hour >= 16) and (hour <= 19):
+    elif hour >= 16 and hour < 24:
         talk('Good evening boss')
     print("J.A.R.V.I.S.: Awaiting your call sir. ") 
     time.sleep(1)   
@@ -100,89 +100,10 @@ def run_jarvis():
                     song = commandll.replace('play', '')
                     talk('Playing ' + song)
                     pywhatkit.playonyt(song)
-                    
-                    
-                
-                
-                if 'start brawlhalla' in commandll:
-                    os.startfile('E:\SteamLibrary\steamapps\common\Brawlhalla\BrawlhallaEAC.exe')
-                    talk('Starting Brawlhalla')
-                 
-                if 'stop brawlhalla' in commandll:
-                    talk('exiting brawlhalla')
-                    os.system('taskill /IM BrawlhallaEAC.exe')
-                     
-                if 'start runescape' in commandll:
-                    os.startfile('E:\SteamLibrary\steamapps\common\RuneScape\Bin\win64\RuneScape.exe')
-                    talk('Starting RuneScape')
-                
-                if 'stop runescape' in commandll:
-                    talk('exiting runescape')
-                    os.system('taskkill /IM RuneScape.exe /F ')
-                if 'start browser' in commandll:
+
+                if 'start google' in commandll:
                     talk('Starting Browser.')
-                    webbrowser.open('https://www.google.com')
-                
-                if 'open ets2' in commandll:
-                    os.startfile('C:\SteamLibrary\steamapps\common\Euro Truck Simulator 2\Bin\win_x64\eurotrucks2.exe')
-                    talk('Starting Euro Truck Simulator 2')
-                
-                if 'stop ets2' in commandll:
-                    talk('exiting Eurotruck simulator 2')
-                    os.system('taskkill /IM eurotrucks2.exe /F ')
-
-                if 'open cmd' in commandll:
-                    talk('starting cmd sir')
-                    os.system('start cmd')
-
-                if 'start notepad' in commandll:
-                    talk('Starting notepad')
-                    os.startfile('C:\\WINDOWS\\system32\\notepad.exe')
-
-                if 'stop notepad' in commandll:
-                    talk('stopping notepad')
-                    os.system('taskkill /IM notepad.exe /F ')    
-                if 'start gta' in commandll:
-                    talk("Starting gtav")
-                    os.startfile('E:\GTAV\GTA5.exe')   
-
-                if 'stop gta' in commandll:
-                    talk('stopping Grand theft auto 5 ')
-                    os.system('taskkill /IM GTA5.exe /F ')    
-
-                if 'start for honor' in commandll:
-                    talk('starting ForHonor')
-                    os.startfile('E:\ForHonor\eac.Exe')
-                
-                if 'stop for honor' in commandll:
-                    talk('exiting for honor')
-                    os.system('taskkill /IM eac.Exe /F ')
-
-                if 'start the isle' in commandll:
-                    talk('starting the isle')
-                    os.startfile('E:\SteamLibrary\steamapps\common\The Isle\TheIsle.exe')      
-
-                if 'stop the isle' in commandll:
-                    talk('exiting the isle')
-                    os.system('taskkill /IM TheIsle.exe /F ')
-
-                if 'start phasmophobia' in commandll:
-                    talk('starting phasmophobia')
-                    os.startfile('E:\SteamLibrary\steamapps\common\Phasmophobia\Phasmophobia.exe')   
-
-                if 'stop phasmophobia' in commandll:
-                    talk('exiting phasmophobia')
-                    os.system('taskkill /IM Phasmophobia.exe /F ')         
-
-                if 'start content manager' in commandll:
-                    talk('starting content manager')
-                    os.startfile('Downloads\Content Manager.exe') 
-
-                if 'stop content manager' in commandll:
-                    talk('exiting content manager')
-                    if 'stop phasmophobia' in commandll:
-                    talk('exiting phasmophobia')
-                    os.system('taskkill /IM Content Manager /F ')    
+                    wb.open('https://www.google.com') 
 
                 if ('shut down pc') in commandll:
                     talk('shutting down this pc')
