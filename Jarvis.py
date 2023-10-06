@@ -7,6 +7,7 @@ import time
 import pygame   
 import webbrowser as wb
 from datetime import datetime
+import wikipedia
 
 startlus = False
 stoplus = False 
@@ -34,7 +35,7 @@ def main_music():
     time.sleep(19)  # Play for 19 seconds
     pygame.quit()
 
-main_music()
+#main_music()
 
 def End_music():
     audio_file_path = ".\Sounds\JarvisEnd.mp3"
@@ -67,6 +68,7 @@ def take_command():
         with sr.Microphone() as source:
             print('Listening...')
             voice = listener.listen(source)
+            global command
             command = listener.recognize_google(voice)
             command = command.lower()
             if name in command:
@@ -80,6 +82,25 @@ def take_command():
         print('Could not understand the audio')
     except sr.RequestError as e:
         print(f'Speech recognition request failed: {str(e)}')
+
+def takeCommand2():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        print("Recognizing...")
+        query = r.recognize_google(audio, language="en-in")
+        print(query)
+
+    except Exception as e:
+        print(e)
+        speak("Please say that again")
+        return "Try Again"
+
+    return query
 
 def run_jarvis():
     global sleep_mode
@@ -104,6 +125,33 @@ def run_jarvis():
                 if 'start google' in commandll:
                     talk('Starting Browser.')
                     wb.open('https://www.google.com') 
+
+                if 'search on wikipedia' in commandll:
+                    searchOnWikipediaCutOffText = command.replace('search on wikipedia', '')
+                    try:
+                        talk("Ok wait sir, Im searching...")
+                        #commandll.replace('search on wikipedia', '')
+                        print(searchOnWikipediaCutOffText)
+                        result = wikipedia.summary(searchOnWikipediaCutOffText, sentences=2)
+                        print(result)
+                        talk(result)
+                    except:
+                        talk("Can't find this page sir, please ask about something else.")
+
+                if 'please remember this for me' in commandll:
+                    talk("What should I remember for you sir?")
+                    data = takeCommand2()
+                    talk("You told me to remember:" + data)
+                    print("You told me to remember:" + str(data))
+                    remember = open("Data\Remember.txt", "w")
+                    remember.write(data)
+                    remember.close
+
+                if 'do you remember anything for me' in commandll:
+                    remember = open("Data\Remember.txt", "r")
+                    talk("You told me to remember:" + remember.read())
+                    print("You told me to remember:" + str(remember))
+                    remember.close
 
                 if ('shut down pc') in commandll:
                     talk('shutting down this pc')
