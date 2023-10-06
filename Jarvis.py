@@ -1,6 +1,6 @@
 import speech_recognition as sr
 import pyttsx3
-import pywhatkit
+import pywhatkit as kit 
 import pyautogui
 import os
 import time
@@ -8,11 +8,6 @@ import pygame
 import webbrowser as wb
 from datetime import datetime
 import wikipedia
-import pyautogui
-from pathlib import Path
-from PIL import Image, ImageGrab
-import io
-import ctypes
 
 startlus = False
 stoplus = False 
@@ -27,6 +22,7 @@ engine.setProperty('voice', voices[1].id)
 def talk(text):
     engine.say(text)
     engine.runAndWait()
+
 
 
 def main_music():
@@ -52,6 +48,7 @@ def End_music():
     pygame.quit()
 
 
+
 def greeting_user():
     hour = datetime.now().hour
     if hour >= 4  and hour < 12:
@@ -65,15 +62,12 @@ def greeting_user():
     talk('How can i assist you? ')   
 greeting_user()
 
-def screenshot():
-    img = pyautogui.screenshot()
-    img.save(Path("Screenshots\Screenshot.png"))
-
 
 def take_command():
     try:
         with sr.Microphone() as source:
             print('Listening...')
+            listener.adjust_for_ambient_noise(source)
             voice = listener.listen(source)
             global command
             command = listener.recognize_google(voice)
@@ -104,17 +98,21 @@ def takeCommand2():
 
     except Exception as e:
         print(e)
-        speak("Please say that again")
+        talk("Please say that again")
         return "Try Again"
 
     return query
 
+
+
 def run_jarvis():
     global sleep_mode
     sleep_mode = False
-
+   
     while True:
+        query = takeCommand2().lower()
         commandll = take_command()
+        
         print(commandll)
 
         if sleep_mode:
@@ -124,14 +122,20 @@ def run_jarvis():
                     sleep_mode = False
         else:
             if commandll:
+                
                 if 'play' in commandll:
                     song = commandll.replace('play', '')
                     talk('Playing ' + song)
-                    pywhatkit.playonyt(song)
+                    kit.playonyt(song)
 
                 if 'start google' in commandll:
                     talk('Starting Browser.')
                     wb.open('https://www.google.com') 
+
+                if ('search') in  commandll and query:
+                    talk('What do you want to search on Google, sir?')
+                    query = takeCommand2().lower()
+                    kit.search(query)
 
                 if 'search on wikipedia' in commandll:
                     searchOnWikipediaCutOffText = command.replace('search on wikipedia', '')
@@ -159,10 +163,6 @@ def run_jarvis():
                     talk("You told me to remember:" + remember.read())
                     print("You told me to remember:" + str(remember))
                     remember.close
-
-                if 'take a screenshot' in commandll:
-                    screenshot()
-                    talk("I took a screenshot, go checck it out sir.")
 
                 if ('shut down pc') in commandll:
                     talk('shutting down this pc')
