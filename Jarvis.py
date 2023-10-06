@@ -8,6 +8,11 @@ import pygame
 import webbrowser as wb
 from datetime import datetime
 import wikipedia
+import pyautogui
+from pathlib import Path
+from PIL import Image, ImageGrab
+import io
+import ctypes
 
 startlus = False
 stoplus = False 
@@ -22,7 +27,6 @@ engine.setProperty('voice', voices[1].id)
 def talk(text):
     engine.say(text)
     engine.runAndWait()
-
 
 
 def main_music():
@@ -48,7 +52,6 @@ def End_music():
     pygame.quit()
 
 
-
 def greeting_user():
     hour = datetime.now().hour
     if hour >= 4  and hour < 12:
@@ -61,6 +64,10 @@ def greeting_user():
     time.sleep(1)   
     talk('How can i assist you? ')   
 greeting_user()
+
+def screenshot():
+    img = pyautogui.screenshot()
+    img.save(Path("Screenshots\Screenshot.png"))
 
 
 def take_command():
@@ -152,6 +159,10 @@ def run_jarvis():
                     talk("You told me to remember:" + remember.read())
                     print("You told me to remember:" + str(remember))
                     remember.close
+
+                if 'take a screenshot' in commandll:
+                    screenshot()
+                    talk("I took a screenshot, go checck it out sir.")
 
                 if ('shut down pc') in commandll:
                     talk('shutting down this pc')
