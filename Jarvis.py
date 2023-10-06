@@ -1,20 +1,22 @@
 import speech_recognition as sr
 import pyttsx3
 import pywhatkit
+import pyautogui
 import os
 import time
-import pygame
+import pygame   
+import webbrowser
 from datetime import datetime
 
-
-
 startlus = False
-stoplus = False
+stoplus = False 
+
 name = 'jarvis'
 listener = sr.Recognizer()
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
+
 
 def talk(text):
     engine.say(text)
@@ -73,7 +75,6 @@ def take_command():
                     print('asleep...')
                     pass
                 else:
-                    print(command)
                     return command
     except sr.UnknownValueError:
         print('Could not understand the audio')
@@ -99,28 +100,94 @@ def run_jarvis():
                     song = commandll.replace('play', '')
                     talk('Playing ' + song)
                     pywhatkit.playonyt(song)
+                    
+                    
                 
-                if 'start opera' in commandll:
-                    os.startfile('C:\Users\jordy\AppData\Local\Programs\Opera\launcher.exe')
+                
                 if 'start brawlhalla' in commandll:
                     os.startfile('E:\SteamLibrary\steamapps\common\Brawlhalla\BrawlhallaEAC.exe')
                     talk('Starting Brawlhalla')
+                 
+                if 'stop brawlhalla' in commandll:
+                    talk('exiting brawlhalla')
+                    os.system('taskill /IM BrawlhallaEAC.exe')
+                     
                 if 'start runescape' in commandll:
                     os.startfile('E:\SteamLibrary\steamapps\common\RuneScape\Bin\win64\RuneScape.exe')
                     talk('Starting RuneScape')
-
+                
+                if 'stop runescape' in commandll:
+                    talk('exiting runescape')
+                    os.system('taskkill /IM RuneScape.exe /F ')
+                if 'start browser' in commandll:
+                    talk('Starting Browser.')
+                    webbrowser.open('https://www.google.com')
+                
                 if 'open ets2' in commandll:
                     os.startfile('C:\SteamLibrary\steamapps\common\Euro Truck Simulator 2\Bin\win_x64\eurotrucks2.exe')
                     talk('Starting Euro Truck Simulator 2')
                 
+                if 'stop ets2' in commandll:
+                    talk('exiting Eurotruck simulator 2')
+                    os.system('taskkill /IM eurotrucks2.exe /F ')
+
                 if 'open cmd' in commandll:
                     talk('starting cmd sir')
                     os.system('start cmd')
-                 
+
+                if 'start notepad' in commandll:
+                    talk('Starting notepad')
+                    os.startfile('C:\\WINDOWS\\system32\\notepad.exe')
+
+                if 'stop notepad' in commandll:
+                    talk('stopping notepad')
+                    os.system('taskkill /IM notepad.exe /F ')    
+                if 'start gta' in commandll:
+                    talk("Starting gtav")
+                    os.startfile('E:\GTAV\GTA5.exe')   
+
+                if 'stop gta' in commandll:
+                    talk('stopping Grand theft auto 5 ')
+                    os.system('taskkill /IM GTA5.exe /F ')    
+
+                if 'start for honor' in commandll:
+                    talk('starting ForHonor')
+                    os.startfile('E:\ForHonor\eac.Exe')
+                
+                if 'stop for honor' in commandll:
+                    talk('exiting for honor')
+                    os.system('taskkill /IM eac.Exe /F ')
+
+                if 'start the isle' in commandll:
+                    talk('starting the isle')
+                    os.startfile('E:\SteamLibrary\steamapps\common\The Isle\TheIsle.exe')      
+
+                if 'stop the isle' in commandll:
+                    talk('exiting the isle')
+                    os.system('taskkill /IM TheIsle.exe /F ')
+
+                if 'start phasmophobia' in commandll:
+                    talk('starting phasmophobia')
+                    os.startfile('E:\SteamLibrary\steamapps\common\Phasmophobia\Phasmophobia.exe')   
+
+                if 'stop phasmophobia' in commandll:
+                    talk('exiting phasmophobia')
+                    os.system('taskkill /IM Phasmophobia.exe /F ')         
+
+                if 'start content manager' in commandll:
+                    talk('starting content manager')
+                    os.startfile('Downloads\Content Manager.exe') 
+
+                if 'stop content manager' in commandll:
+                    talk('exiting content manager')
+                    if 'stop phasmophobia' in commandll:
+                    talk('exiting phasmophobia')
+                    os.system('taskkill /IM Content Manager /F ')    
+
                 if ('shut down pc') in commandll:
                     talk('shutting down this pc')
                     os.system(' shutdown /s /t 10')
-
+     
                 if 'go to sleep' in commandll:
                     talk('Going to sleep. Wake me up with the command "Wake up".')
                     sleep_mode = True
