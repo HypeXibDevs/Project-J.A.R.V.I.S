@@ -66,15 +66,19 @@ user_obj = Settings(
 
 
 class CustomCommand:
-    def __init__(self, name, action):
+    def __init__(self, name, actions):
         self.name = name
-        self.action = action
+        self.actions = actions
 
     def execute(self):
-        try:
-            threading.Thread(target=lambda: eval(self.action)).start()
-        except Exception as e:
-            print(f"Error executing command '{self.name}': {str(e)}")
+        threads = []
+        for action in self.actions:
+            try:
+                thread = threading.Thread(target=lambda: eval(action))
+                threads.append(thread)
+                thread.start()
+            except Exception as e:
+                print(f"Error executing command '{self.name}': {str(e)}")
 
 
 def load_custom_commands(xml_file_path):
@@ -84,9 +88,8 @@ def load_custom_commands(xml_file_path):
 
     for command in root.findall('command'):
         name = command.get('name')
-        action_str = command.find('action').text
-        action = CustomCommand(name, action_str)
-        custom_commands[name] = action
+        actions = [action.text for action in command.findall('action')]
+        custom_commands[name] = CustomCommand(name, actions)
 
     return custom_commands
 
@@ -171,7 +174,7 @@ def run_jarvis():
                 custom_command_executed = False
                 
                 for command_name, action_obj in custom_commands.items():
-                    if command_name in command:
+                    if commandll.strip() == command_name:
                         print(f"Executing custom command: {command_name}")
                         action_obj.execute()
                         custom_command_executed = True
