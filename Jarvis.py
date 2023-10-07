@@ -8,6 +8,9 @@ import pygame
 import webbrowser as wb
 from datetime import datetime
 import wikipedia
+import xml.etree.ElementTree as ET
+import subprocess
+import threading
 
 startlus = False
 stoplus = False 
@@ -18,13 +21,12 @@ engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
-
 def talk(text):
     engine.say(text)
     engine.runAndWait()
 
 
-
+# Plays the end intro when the program is started
 def main_music():
     audio_file_path = ".\Sounds\JarvisStart.mp3"
     
@@ -37,6 +39,7 @@ def main_music():
 
 #main_music()
 
+# Plays the end outro when the program is getting shutdowned by the shutdown command
 def End_music():
     audio_file_path = ".\Sounds\JarvisEnd.mp3"
     
@@ -48,18 +51,58 @@ def End_music():
     pygame.quit()
 
 
+# Used for making the settings class and is used for settings
+xml_file_path = 'Settings.XML'
+tree = ET.parse(xml_file_path)
+root = tree.getroot()
 
+class Settings:
+    def __init__(self, name):
+        self.name = name
+
+user_obj = Settings(
+    name=root.find('Name').text
+)
+
+
+class CustomCommand:
+    def __init__(self, name, action):
+        self.name = name
+        self.action = action
+
+    def execute(self):
+        try:
+            threading.Thread(target=lambda: eval(self.action)).start()
+        except Exception as e:
+            print(f"Error executing command '{self.name}': {str(e)}")
+
+
+def load_custom_commands(xml_file_path):
+    custom_commands = {}
+    tree = ET.parse(xml_file_path)
+    root = tree.getroot()
+
+    for command in root.findall('command'):
+        name = command.get('name')
+        action_str = command.find('action').text
+        action = CustomCommand(name, action_str)
+        custom_commands[name] = action
+
+    return custom_commands
+
+
+# Greeting the user on startup of the program
 def greeting_user():
     hour = datetime.now().hour
     if hour >= 4  and hour < 12:
-        talk('Good morning boss')
+        talk(f'Good morning {user_obj.name}')
     elif hour >= 12 and hour < 16:
-        talk('Good afternoon boss')
+        talk(f'Good afternoon {user_obj.name}')
     elif hour >= 16 and hour < 24:
-        talk('Good evening boss')
-    print("J.A.R.V.I.S.: Awaiting your call sir. ") 
+        talk(f'Good evening {user_obj.name}')
+    print(f"J.A.R.V.I.S.: Awaiting your call {user_obj.name}. ") 
     time.sleep(1)   
-    talk('How can i assist you? ')   
+    talk('How can I assist you? ')   
 greeting_user()
 
 
@@ -108,9 +151,11 @@ def takeCommand2():
 def run_jarvis():
     global sleep_mode
     sleep_mode = False
-   
+
+    custom_commands = load_custom_commands("CustomCommands.XML")
+    print(custom_commands)
+    
     while True:
-        query = takeCommand2().lower()
         commandll = take_command()
         
         print(commandll)
@@ -122,7 +167,19 @@ def run_jarvis():
                     sleep_mode = False
         else:
             if commandll:
+
+                custom_command_executed = False
                 
+                for command_name, action_obj in custom_commands.items():
+                    if command_name in command:
+                        print(f"Executing custom command: {command_name}")
+                        action_obj.execute()
+                        custom_command_executed = True
+                        print(custom_command_executed)
+                        break
+                if not custom_command_executed:
+                    print("Command wasn't a custom command by user.")
+
                 if 'play' in commandll:
                     song = commandll.replace('play', '')
                     talk('Playing ' + song)
@@ -132,25 +189,25 @@ def run_jarvis():
                     talk('Starting Browser.')
                     wb.open('https://www.google.com') 
 
-                if ('search') in  commandll and query:
-                    talk('What do you want to search on Google, sir?')
+                if 'search on google' in  commandll:
+                    talk(f'What do you want to search on Google, {user_obj.name}?')
                     query = takeCommand2().lower()
                     kit.search(query)
 
                 if 'search on wikipedia' in commandll:
                     searchOnWikipediaCutOffText = command.replace('search on wikipedia', '')
                     try:
-                        talk("Ok wait sir, Im searching...")
+                        talk(f"Ok wait {user_obj.name}, Im searching...")
                         #commandll.replace('search on wikipedia', '')
                         print(searchOnWikipediaCutOffText)
                         result = wikipedia.summary(searchOnWikipediaCutOffText, sentences=2)
                         print(result)
                         talk(result)
                     except:
-                        talk("Can't find this page sir, please ask about something else.")
+                        talk(f"Can't find this page {user_obj.name}, please ask about something else.")
 
                 if 'please remember this for me' in commandll:
-                    talk("What should I remember for you sir?")
+                    talk(f"What should I remember for you {user_obj.name}?")
                     data = takeCommand2()
                     talk("You told me to remember:" + data)
                     print("You told me to remember:" + str(data))
@@ -164,6 +221,8 @@ def run_jarvis():
                     print("You told me to remember:" + str(remember))
                     remember.close
 
+                
+
                 if ('shut down pc') in commandll:
                     talk('shutting down this pc')
                     os.system(' shutdown /s /t 10')
@@ -173,7 +232,7 @@ def run_jarvis():
                     sleep_mode = True
 
                 if 'shut down' in commandll:
-                    talk('Shutting down boss.')
+                    talk(f'Shutting down {user_obj.name}.')
                     End_music()
                     break
         

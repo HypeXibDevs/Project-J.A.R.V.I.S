@@ -1,0 +1,9 @@
+<commands>
+    <command name="start notepad">
+        <action>subprocess.call(["C:\\Windows\\system32\\notepad.exe"])</action>
+    </command>
+    <command name="start calculator">
+        <action>subprocess.call(["C:\\Windows\\system32\\calc.exe"])</action>
+    </command>
+    <!-- Add more custom commands as needed -->
+</commands>
