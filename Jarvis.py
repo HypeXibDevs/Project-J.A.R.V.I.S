@@ -11,6 +11,7 @@ import wikipedia
 import xml.etree.ElementTree as ET
 import subprocess
 import threading
+from pathlib import Path
 
 startlus = False
 stoplus = False 
@@ -109,6 +110,11 @@ def greeting_user():
 greeting_user()
 
 
+def screenshot():
+    img = pyautogui.screenshot()
+    img.save(Path("Screenshots\Screenshot.png"))
+
+
 def take_command():
     try:
         with sr.Microphone() as source:
@@ -118,6 +124,7 @@ def take_command():
             global command
             command = listener.recognize_google(voice)
             command = command.lower()
+            print(f'command = {command}')
             if name in command:
                 command = command.replace('jarvis', '')
                 if not 'wake up' in command and sleep_mode:
