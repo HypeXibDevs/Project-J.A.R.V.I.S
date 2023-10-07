@@ -221,7 +221,9 @@ def run_jarvis():
                     print("You told me to remember:" + str(remember))
                     remember.close
 
-                
+                if 'take a screenshot' in commandll:
+                    screenshot()
+                    talk("I took a screenshot, go checck it out sir.")
 
                 if ('shut down pc') in commandll:
                     talk('shutting down this pc')
