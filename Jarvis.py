@@ -58,11 +58,13 @@ tree = ET.parse(xml_file_path)
 root = tree.getroot()
 
 class Settings:
-    def __init__(self, name):
+    def __init__(self, name, toggleerrorprints):
         self.name = name
+        self.toggleerrorprints = toggleerrorprints
 
 user_obj = Settings(
-    name=root.find('Name').text
+    name=root.find('Name').text,
+    toggleerrorprints=root.find('ToggleErrorPrints').text
 )
 
 
@@ -128,14 +130,20 @@ def take_command():
             if name in command:
                 command = command.replace('jarvis', '')
                 if not 'wake up' in command and sleep_mode:
-                    print('asleep...')
+                    print('Asleep...')
                     pass
                 else:
                     return command
     except sr.UnknownValueError:
-        print('Could not understand the audio')
+        if user_obj.toggleerrorprints == 'True':
+            print('Could not understand the audio')
+        else:
+            pass
     except sr.RequestError as e:
-        print(f'Speech recognition request failed: {str(e)}')
+        if user_obj.toggleerrorprints == 'True':
+            print(f'Speech recognition request failed: {str(e)}')
+        else:
+            pass
 
 def takeCommand2():
     r = sr.Recognizer()
@@ -147,7 +155,6 @@ def takeCommand2():
     try:
         print("Recognizing...")
         query = r.recognize_google(audio, language="en-in")
-        print(query)
 
     except Exception as e:
         print(e)
@@ -163,12 +170,9 @@ def run_jarvis():
     sleep_mode = False
 
     custom_commands = load_custom_commands("CustomCommands.XML")
-    print(custom_commands)
     
     while True:
         commandll = take_command()
-        
-        print(commandll)
 
         if sleep_mode:
             if commandll:
@@ -185,7 +189,6 @@ def run_jarvis():
                         print(f"Executing custom command: {command_name}")
                         action_obj.execute()
                         custom_command_executed = True
-                        print(custom_command_executed)
                         break
                 if not custom_command_executed:
                     print("Command wasn't a custom command by user.")
